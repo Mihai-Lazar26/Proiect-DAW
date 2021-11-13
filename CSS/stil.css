@@ -1,0 +1,12 @@
+.container-text-lm{
+    background-color:rgb(12, 126, 172);
+    color:rgb(0, 0, 0);
+}
+
+.container-text-lm img{
+    width:85%;
+}
+
+.container-text-lm .text{
+    text-align: left;
+}
