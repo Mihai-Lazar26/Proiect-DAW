@@ -1,3 +1,17 @@
+<?php
+    session_start();
+    if(isset($_GET['error'])){
+        $error = $_GET['error'];
+
+        if($error = 'stmtfailed'){
+            echo "<script type='text/javascript'>alert('Ceva nu a mers bine');</script>";
+        }
+        if($error = 'biletexists'){
+            echo "<script type='text/javascript'>alert('Din pacate biletul nu mai este valabil');</script>";
+        }
+    }
+?>
+
 <!DOCTYPE html>
 <html lang = "ro">
     <head>
@@ -5,8 +19,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
         <link rel = "stylesheet" href = "CSS/stil.css" type = "text/css">
+        <title>Index</title>
     </head>
     <body>
+
+    <?php
+        include_once 'navbar.php';
+    ?>
 
     <section class="p-5 container-text-lm">
             <div class="container text">
@@ -58,8 +77,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
     -->
     </body>
-<?php
-
-    include 'connect-DB-Heroku.php';
-?>
 </html>
