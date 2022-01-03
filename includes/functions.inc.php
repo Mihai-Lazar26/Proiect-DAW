@@ -216,6 +216,7 @@
             $_SESSION['user_id'] = $userExist['user_id'];
             $_SESSION['nume'] = $userExist['nume'];
             $_SESSION['prenume'] = $userExist['prenume'];
+            $_SESSION['tip'] = $userExist['tip'];
 
             header("location: ../index.php");
             exit();
@@ -792,5 +793,475 @@
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
     }
+
+    function getUsers($conn, $nume, $prenume, $email){
+        $query = "SELECT * FROM users WHERE lower(nume) like ? and lower(prenume) like ? and lower(email) like ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: index.php?error=stmtfailed");
+            exit();
+        }
+
+        $nume = '%'.$nume.'%';
+        $prenume = '%'.$prenume.'%';
+        $email = '%'.$email.'%';
+
+        mysqli_stmt_bind_param($stmt, "sss", $nume, $prenume, $email);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            $i = 1;
+            $rows[$i] = $row;
+            $i++;
+
+            while($row = mysqli_fetch_assoc($resultData)){
+                $rows[$i] = $row;
+                $i++;
+            }
+
+            return $rows;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+
+    function getUserById($conn, $user_id){
+        $query = "SELECT * FROM users WHERE user_id = ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $user_id);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            return $row;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+
+    function updateUser($conn, $user_id, $nume, $prenume, $email, $tip){
+        $query = "UPDATE users SET nume = ?, prenume = ?, email = ?, tip = ? WHERE user_id = ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "sssii", $nume, $prenume, $email, $tip, $user_id);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    }
+
+    function getCinemas($conn, $nume, $judet, $adresa){
+        $query = "SELECT * FROM cinema WHERE lower(nume) like ? and lower(judet) like ? and lower(adresa) like ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: index.php?error=stmtfailed");
+            exit();
+        }
+
+        $nume = '%'.$nume.'%';
+        $judet = '%'.$judet.'%';
+        $adresa = '%'.$adresa.'%';
+
+        mysqli_stmt_bind_param($stmt, "sss", $nume, $judet, $adresa);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            $i = 1;
+            $rows[$i] = $row;
+            $i++;
+
+            while($row = mysqli_fetch_assoc($resultData)){
+                $rows[$i] = $row;
+                $i++;
+            }
+
+            return $rows;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+
+    function getManageriOfCinema($conn, $cinema_id){
+        $query = "SELECT * FROM users WHERE cinema_id = ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $cinema_id);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            $i = 1;
+            $rows[$i] = $row;
+            $i++;
+
+            while($row = mysqli_fetch_assoc($resultData)){
+                $rows[$i] = $row;
+                $i++;
+            }
+
+            return $rows;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+
+    function checkIfManager($conn, $user_id){
+        $query = "SELECT * FROM users WHERE user_id = ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: ../index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $user_id);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            if($row['tip'] == 2){
+                $result = true;
+                return $result;
+            }
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+
+    function makeManagerOfCinema($conn, $user_id, $cinema_id){
+        $query = "UPDATE users SET cinema_id = ? WHERE user_id = ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: ../index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "ii", $cinema_id, $user_id);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    }
+
+    function makeManagerOfCinemaNULL($conn, $user_id){
+        $query = "UPDATE users SET cinema_id = NULL WHERE user_id = ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: ../index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $user_id);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    }
+
+    function getSaliOfCinemaByID($conn, $cinema_id){
+        $query = "SELECT DISTINCT * FROM sali WHERE cinema_id = ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $cinema_id);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            $i = 1;
+            $rows[$i] = $row;
+            $i++;
+
+            while($row = mysqli_fetch_assoc($resultData)){
+                $rows[$i] = $row;
+                $i++;
+            }
+
+            return $rows;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+
+    function getCinemaById($conn, $cinema_id){
+        $query = "SELECT * FROM cinema WHERE cinema_id = ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $cinema_id);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            return $row;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+
+    function getDifuzari($conn, $cinema_id, $sala_id){
+        $query = "SELECT DISTINCT film_id, data_start, data_end FROM difuzari WHERE cinema_id = ? AND sala_id = ? 
+                AND data_start > NOW() ORDER BY 2;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "ii", $cinema_id, $sala_id);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            $i = 1;
+            $rows[$i] = $row;
+            $i++;
+
+            while($row = mysqli_fetch_assoc($resultData)){
+                $rows[$i] = $row;
+                $i++;
+            }
+
+            return $rows;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+
+    function getFilmById($conn, $film_id){
+        $query = "SELECT * FROM filme WHERE film_id = ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $film_id);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            return $row;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+
+    function getFilme($conn, $titlu, $regizor){
+        $query = "SELECT * FROM filme WHERE lower(titlu) like ? and lower(regizor) like ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: index.php?error=stmtfailed");
+            exit();
+        }
+
+        $titlu = '%'.$titlu.'%';
+        $regizor = '%'.$regizor.'%';
+
+        mysqli_stmt_bind_param($stmt, "ss", $titlu, $regizor);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            $i = 1;
+            $rows[$i] = $row;
+            $i++;
+
+            while($row = mysqli_fetch_assoc($resultData)){
+                $rows[$i] = $row;
+                $i++;
+            }
+
+            return $rows;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+
+    function makeDataEnd($conn, $film_id, $data_start){
+        $cautaFilm = getFilmById($conn, $film_id);
+        $durata = $cautaFilm['durata'];
+
+        $data_interval = new DateInterval('PT'.$durata.'M');
+        $_data_start = new DateTime($data_start);
+        $_data_end = clone $_data_start;
+        $_data_end->add($data_interval);
+
+        $stringData_end = date_format($_data_end, 'Y-m-d H:i:s');
+
+        return $stringData_end;
+    }
+
+    function selectLocuri($conn, $cinema_id, $sala_id){
+        $query = "SELECT * FROM loc WHERE cinema_id = ? AND sala_id = ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: ../index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "ii", $cinema_id, $sala_id);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+        $rows;
+        $i = 1;
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            $rows[$i] = $row;
+            $i++;
+
+            while($row = mysqli_fetch_assoc($resultData)){
+                $rows[$i] = $row;
+                $i++;
+            }
+
+            return $rows;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+
+    function checkDataStart($conn, $cinema_id, $sala_id, $data_start, $data_end){
+        $query = "select distinct data_start, data_end
+                    from difuzari
+                    where (? between data_start and data_end 
+                    or ? BETWEEN data_start and data_end
+                    or data_start between ? and ?
+                    or data_end BETWEEN ? and ?)
+                    and cinema_id = ? and sala_id = ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: ../index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "ssssssii",$data_start, $data_end, $data_start, $data_end,
+                               $data_start, $data_end, $cinema_id, $sala_id);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            return $row;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+
+        
+    }
+
+    function createDifuzare($conn, $cinema_id, $sala_id, $film_id, $data_start){
+
+
+        $selectLocuri = selectLocuri($conn, $cinema_id, $sala_id);
+        if($selectLocuri !== false){
+
+            $data_end = makeDataEnd($conn, $film_id, $data_start);
+
+            $ok = checkDataStart($conn, $cinema_id, $sala_id, $data_start, $data_end);
+
+            if($ok !== false){
+                header("location: ../index.php?error=stmtfailed");
+                exit();
+            }
+
+            $n = sizeof($selectLocuri);
+            $stmt = mysqli_stmt_init($conn);
+            
+            for($i = 1; $i <= $n; $i++){
+                $query = "INSERT INTO difuzari (cinema_id, sala_id, loc_id, film_id, data_start, data_end) 
+                VALUES (?, ?, ?, ?, ?, ?);";
+                
+                if(!mysqli_stmt_prepare($stmt, $query)){
+                    header("location: ../index.php?error=stmtfailed");
+                    exit();
+                }
+
+                $loc_id = $selectLocuri[$i]['loc_id'];
+                
+
+                mysqli_stmt_bind_param($stmt, "iiiiss", $cinema_id, $sala_id, $loc_id, $film_id, $data_start, $data_end);
+                mysqli_stmt_execute($stmt);
+                
+            }
+            mysqli_stmt_close($stmt);
+        }
+
+    }
+
+    
 
 ?>

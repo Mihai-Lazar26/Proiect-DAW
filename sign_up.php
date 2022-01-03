@@ -44,11 +44,6 @@
             </tr>
 
             <tr>
-                <td hidden><input type="checkbox" name="tip" value="1" checked >Sunt un user</td>
-                <td><input type="checkbox" name="tip" value="2">Sunt un manager</td>
-            </tr>
-
-            <tr>
                 <td><button type="submit" name="submit">Sign up</button></td>
             </tr>
         </table>

@@ -6,7 +6,7 @@
         $email = trim($_POST['email']);
         $pwd = $_POST['pwd'];
         $cpwd = $_POST['cpwd'];
-        $tip = $_POST['tip'];
+        $tip = 1;
 
         require_once 'connect-DB.inc.php';
         require_once 'functions.inc.php';

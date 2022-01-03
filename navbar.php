@@ -11,6 +11,16 @@
 
                 <?php
                     if(isset($_SESSION['user_id'])){
+                        if($_SESSION['tip'] == 0){
+                            echo    '<li class="nav-item">
+                                        <a href="admin.php" class="nav-link">Admin Page</a>
+                                    </li>';
+                        }
+                        if($_SESSION['tip'] == 2){
+                            echo    '<li class="nav-item">
+                                        <a href="manager.php" class="nav-link">Manager Page</a>
+                                    </li>';
+                        }
                         echo '<li class="nav-item">
                                     <a href="profil.php" class="nav-link">Profil</a>
                                 </li>

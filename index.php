@@ -3,10 +3,10 @@
     if(isset($_GET['error'])){
         $error = $_GET['error'];
 
-        if($error = 'stmtfailed'){
+        if($error == 'stmtfailed'){
             echo "<script type='text/javascript'>alert('Ceva nu a mers bine');</script>";
         }
-        if($error = 'biletexists'){
+        if($error == 'biletexists'){
             echo "<script type='text/javascript'>alert('Din pacate biletul nu mai este valabil');</script>";
         }
     }
