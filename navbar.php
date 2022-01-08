@@ -9,6 +9,10 @@
         <div class="collapse navbar-collapse" id="navmenu">
             <ul class="navbar-nav ms-auto">
 
+                <li class="nav-item">
+                    <a href="statistici.php" class="nav-link">Cele mai populare</a>
+                </li>
+
                 <?php
                     if(isset($_SESSION['user_id'])){
                         if($_SESSION['tip'] == 0){

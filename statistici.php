@@ -1,11 +1,5 @@
 <?php
     session_start();
-    if(!isset($_SESSION['user_id'])){
-
-        Header('location: index.php');
-        exit();
-
-    }
 ?>
 
 <!DOCTYPE html>
@@ -16,18 +10,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel = "stylesheet" href = "CSS/stil.css" type = "text/css">
-    <title>Profil</title>
+    <title>Statistici</title>
 </head>
 <body>
 
     <?php
         include_once 'navbar.php';
 
-        echo 'Hello '.$_SESSION['nume'].' '.$_SESSION['prenume'].'<br>';
+        require_once 'includes/functions.inc.php';
+        require_once 'includes/connect-DB.inc.php';
 
+        $statistica = getStatisticaPopularitate($conn);
+
+        echo '<p>Top popularitate:</p>';
+
+        for($i = 1; $i <= sizeof($statistica); $i++){
+            $film_id = $statistica[$i]['film_id'];
+            $nr = $statistica[$i]['nr'];
+            $film = getFilmById($conn, $film_id);
+
+            echo 'Locul: '.$i.'<br>Film: '.$film['titlu'].'<br>Numărul de bilete vândute: '.$nr.'<br><br>';
+        }
     ?>
-    
-    <a href="bilete.php" class="href">Bilete</a>
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>
 </html>

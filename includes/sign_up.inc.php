@@ -1,5 +1,16 @@
 <?php
 
+if(isset($_POST['submit']))
+{
+    $secret = '6LekSvEdAAAAANwRqe8FAjH5EHeFjOuSNZNFjJm8';
+    $verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$secret.'&response='.$_POST['g-recaptcha-response']);
+    $responseData = json_decode($verifyResponse);
+    if(!$responseData->success)
+    {
+        header("location: ../sign_up.php?error=captchafailed");
+        exit();
+    }
+}
     if(isset($_POST['submit'])){
         $nume = trim($_POST['nume']);
         $prenume = trim($_POST['prenume']);

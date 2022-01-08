@@ -163,7 +163,7 @@
     }
 
     function createTempUser($conn, $nume, $prenume, $email, $pwd, $tip){
-        $query = "INSERT INTO unconfirmed_users (nume, prenume, email, parola, tip) VALUES (?, ?, ?, ?, ?);";
+        $query = "INSERT INTO unconfirmed_users (nume, prenume, email, parola, tip, date) VALUES (?, ?, ?, ?, ?, NOW());";
         $stmt = mysqli_stmt_init($conn);
         if(!mysqli_stmt_prepare($stmt, $query)){
             header("location: ../sign_up.php?error=stmtfailed");
@@ -262,7 +262,40 @@
     }
 
     function mailCode($email, $code){
-        echo '<p>Codul este '.$code.'</p>';
+        require_once('phpmailer/class.phpmailer.php');
+        require_once('phpmailer/mail_config.php');
+
+        $message = '<p>Codul de verificare este: <b>'.$code.'</b></p>';
+
+        $mail = new PHPMailer(true); 
+
+        $mail->IsSMTP();
+        try {
+        
+        $mail->SMTPDebug  = 0;                     
+        $mail->SMTPAuth   = true; 
+
+        $to=$email;
+        $nume='User';
+
+        $mail->SMTPSecure = "ssl";                 
+        $mail->Host       = "smtp.gmail.com";      
+        $mail->Port       = 465;                   
+        $mail->Username   = $username;  			// GMAIL username
+        $mail->Password   = $password;            // GMAIL password
+        $mail->AddAddress($to, $nume);
+        
+        $mail->SetFrom($username, 'Proiect DAW');
+        $mail->Subject = 'Codul de verificare';
+        $mail->AltBody = strip_tags($message); 
+        $mail->MsgHTML($message);
+        $mail->Send();
+        echo "<p>Codul de confirmare a fost trimis</p>\n";
+        } catch (phpmailerException $e) {
+        echo $e->errorMessage(); //error from PHPMailer
+        } catch (Exception $e) {
+        echo $e->getMessage(); //error from anything else!
+        }
     }
 
     function emptyCode($code){
@@ -1262,6 +1295,101 @@
 
     }
 
-    
+    function getBileteByUser_id($conn, $user_id){
+        $query = "SELECT * FROM bilet WHERE user_id = ? ORDER BY bilet_id DESC;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $user_id);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            $i = 1;
+            $rows[$i] = $row;
+            $i++;
+
+            while($row = mysqli_fetch_assoc($resultData)){
+                $rows[$i] = $row;
+                $i++;
+            }
+
+            return $rows;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+
+    function infoBilet($conn, $bilet_id){
+        $query = "SELECT b.user_id, f.titlu as titlu_film, f.regizor as regizor_film, f.durata as durata_film, 
+        f.clasificare as clasificare_film, c.nume as nume_cinema, c.judet as judet_cinema, 
+        c.adresa adresa_cinema, s.nume as nume_sala, d.loc_id, d.data_start, d.data_end, 
+        tb.nume_tip as tip_bilet, tb.pret FROM bilet b, difuzari d, tip_bilet tb, cinema c, sali s, filme f 
+        WHERE b.difuzare_id = d.difuzare_id AND b.cod_tip_bilet = tb.cod_tip_bilet AND c.cinema_id = d.cinema_id 
+        AND d.cinema_id = s.cinema_id AND d.sala_id = s.sala_id AND d.film_id = f.film_id AND b.bilet_id = ?;";
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $bilet_id);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            return $row;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
+
+    function getStatisticaPopularitate($conn){
+        $query = "select f.film_id, count(b.bilet_id) as nr from filme f left outer join difuzari d on 
+        f.film_id = d.film_id left outer join bilet b on b.difuzare_id = d.difuzare_id group by f.film_id 
+        ORDER BY 2 DESC;";
+
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        if($row = mysqli_fetch_assoc($resultData)){
+            $i = 1;
+            $rows[$i] = $row;
+            $i++;
+
+            while($row = mysqli_fetch_assoc($resultData)){
+                $rows[$i] = $row;
+                $i++;
+            }
+
+            return $rows;
+        }
+        else{
+            $result = false;
+            return $result;
+        }
+
+        mysqli_stmt_close($stmt);
+    }
 
 ?>
