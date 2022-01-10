@@ -32,6 +32,11 @@
 
         $data_start = $data_start[0].' '.$data_start[1].':00';
 
+        if(check($conn, $data_start) === 0){
+            header("location: ../programeaza_film_data.php?sala_id=".$sala_id."&film_id=".$film_id."&error=wrongdate");
+            exit();
+        }
+
         $film = getFilmById($conn, $film_id);
 
         createDifuzare($conn, $cinema_id, $sala_id, $film_id, $data_start);

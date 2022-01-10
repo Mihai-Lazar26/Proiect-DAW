@@ -1392,4 +1392,24 @@
         mysqli_stmt_close($stmt);
     }
 
+    function check($conn, $data_start){
+        $query = "select now() < ? as comp;";
+
+        $stmt = mysqli_stmt_init($conn);
+        if(!mysqli_stmt_prepare($stmt, $query)){
+            header("location: ../index.php?error=stmtfailed");
+            exit();
+        }
+
+        mysqli_stmt_bind_param($stmt, "s", $data_start);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+
+        $row = mysqli_fetch_assoc($resultData);
+        return $row['comp'];
+
+        mysqli_stmt_close($stmt);
+    }
+
 ?>

@@ -43,6 +43,9 @@
             if($error == 'empty'){
                 echo 'Campul nu a fost completat!';
             }
+            if($error == 'wrongdate'){
+                echo 'Data introdusa este gresita!';
+            }
         }
     
     ?>

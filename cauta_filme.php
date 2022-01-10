@@ -17,7 +17,7 @@
     <?php
         include_once 'navbar.php';
 
-        echo 'Note: Filmele care au bilete valabile sunt "Hai sa cantam din nou!" si "Resident Evil: Bun venit în Raccoon City"'
+        echo 'Note: Filmele care au bilete valabile sunt "Venom: Sa fie carnagiu" si "Resident Evil: Bun venit în Raccoon City"'
     ?>
 
     <form action="cauta_film_results.php" method="post">
